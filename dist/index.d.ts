@@ -13,7 +13,14 @@ interface Options {
     /**每次重连的间隔：单位毫秒 */
     reconnection_time: number;
     /**protos 压缩配置 */
-    protos?: any;
+    protos?: {
+        request?: {
+            [key: string]: any;
+        };
+        response?: {
+            [key: string]: any;
+        };
+    };
 }
 /**
  * 客户端主类

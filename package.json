@@ -1,12 +1,13 @@
 {
   "name": "ssocket-js",
-  "version": "1.0.18",
+  "version": "1.0.20",
   "description": "仿 Koa 中间件控制的 WebSocket 服务的 Web 客户端程序",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
     "tsc": "rm -fr ./dist & tsc --outDir ./dist",
-    "build": "webpack"
+    "build": "webpack & npm run deldts",
+    "deldts":"sleep 1 & rm -fr ./src/*.d.ts"
   },
   "keywords": [
     "socket",

@@ -25,7 +25,11 @@ interface Options {
     /**每次重连的间隔：单位毫秒 */
     reconnection_time: number;
     /**protos 压缩配置 */
-    protos?: any;
+    protos?: {
+        request?: {[key: string]: any};
+        response?: {[key: string]: any};
+        
+    };
 }
 
 let socket: WebSocket;
@@ -92,6 +96,10 @@ export default class Ssocket extends Emitter {
         this.reconnection_id = <NodeJS.Timeout><unknown>0;
         socket = <WebSocket><unknown>null;
         this.reconnection_count = this.opts.reconnection_count;
+        if(this.opts.protos){
+            if(this.opts.protos.request) Code.parseRequestJson(this.opts.protos.request)
+            if(this.opts.protos.response) Code.parseResponseJson(this.opts.protos.response)
+        }
         this.connection();
         logger(this.id + ":constructor", {opts})
     }
@@ -100,7 +108,6 @@ export default class Ssocket extends Emitter {
      */
     public connection(){
         if(this.status != Code.SocketStatus.CLOSE) return ;
-        this.opts.protos && Code.parseProtosJson(this.opts.protos)
         socket = new WebSocket(this.url);
         socket.binaryType = "arraybuffer";
         socket.onopen = ev => {

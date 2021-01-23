@@ -105,6 +105,12 @@ var Ssocket = /** @class */ (function (_super) {
         _this.reconnection_id = 0;
         socket = null;
         _this.reconnection_count = _this.opts.reconnection_count;
+        if (_this.opts.protos) {
+            if (_this.opts.protos.request)
+                Code.parseRequestJson(_this.opts.protos.request);
+            if (_this.opts.protos.response)
+                Code.parseResponseJson(_this.opts.protos.response);
+        }
         _this.connection();
         logger(_this.id + ":constructor", { opts: opts });
         return _this;
@@ -124,7 +130,6 @@ var Ssocket = /** @class */ (function (_super) {
         var _this = this;
         if (this.status != Code.SocketStatus.CLOSE)
             return;
-        this.opts.protos && Code.parseProtosJson(this.opts.protos);
         socket = new WebSocket(this.url);
         socket.binaryType = "arraybuffer";
         socket.onopen = function (ev) {

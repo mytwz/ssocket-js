@@ -10,7 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.expandStatusCode = exports.StatusCode = exports.decode = exports.encode = exports.parseProtosJson = exports.SocketStatus = exports.PackageType = void 0;
+exports.expandStatusCode = exports.StatusCode = exports.decode = exports.encode = exports.parseResponseJson = exports.parseRequestJson = exports.SocketStatus = exports.PackageType = void 0;
 var pako_1 = __importDefault(require("pako"));
 var logger_1 = __importDefault(require("./logger"));
 var logger = logger_1.default("code");
@@ -51,7 +51,7 @@ var DataType;
 /**
  *
  */
-var ProtosCode = new /** @class */ (function () {
+var Protos = /** @class */ (function () {
     function Protos() {
         this.protos = {};
     }
@@ -273,6 +273,8 @@ var ProtosCode = new /** @class */ (function () {
     };
     return Protos;
 }());
+var RequestProtos = new Protos();
+var ResponseProtos = new Protos();
 var PackageType;
 (function (PackageType) {
     /**握手 */
@@ -298,13 +300,18 @@ var SocketStatus;
     /**重连 */
     SocketStatus[SocketStatus["RECONNECTION"] = 5] = "RECONNECTION";
 })(SocketStatus = exports.SocketStatus || (exports.SocketStatus = {}));
-var isProtos = false;
 /**
  * 配置 Protos 文件
  * @param config
  */
-function parseProtosJson(config) { ProtosCode.parse(config); isProtos = true; }
-exports.parseProtosJson = parseProtosJson;
+function parseRequestJson(config) { RequestProtos.parse(config); }
+exports.parseRequestJson = parseRequestJson;
+/**
+ * 配置 Protos 文件
+ * @param config
+ */
+function parseResponseJson(config) { ResponseProtos.parse(config); }
+exports.parseResponseJson = parseResponseJson;
 /**
  * 消息封包
  * - +------+----------------------------------+------+
@@ -339,7 +346,7 @@ function encode(type, package_data) {
     index += 1;
     if (PackageType.data == type) {
         var _a = package_data || {}, _b = _a.path, path = _b === void 0 ? "" : _b, _c = _a.request_id, request_id = _c === void 0 ? 0 : _c, data = _a.data;
-        var _data = ProtosCode.encode(path, data);
+        var _data = RequestProtos.encode(path, data);
         if (_data.length > 128) {
             _data = pako_1.default.gzip(_data);
         }
@@ -418,7 +425,7 @@ function decode(_buffer) {
             if (data_buffer.byteLength > 2 && new Uint16Array(data_buffer.slice(0, 2))[0] == 0x8b1f) {
                 data_buffer = pako_1.default.ungzip(new Uint8Array(data_buffer));
             }
-            var data = ProtosCode.decode(path, data_buffer);
+            var data = ResponseProtos.decode(path, data_buffer);
             return { type: type, request_id: request_id, path: path, status: status_1, msg: msg, data: data };
         }
         else if (type == PackageType.heartbeat) {
