@@ -15,8 +15,8 @@ npm i -s ssocket
 ### 建立连接
 
 ```javascript
- // <script src="./dist/ssocket.min.js"></script> 浏览器引入方式
-const Ssocket = require("ssocket-js");
+ // <script src="./dist/ssocket.min.js"></script> 浏览器引入方式 
+const Ssocket = require("ssocket-js").default;
 const client = new Ssocket("ws[wss]://ip[:port]", {
     /**ping 超时时间单位：毫秒 */
     ping_timeout: 1000 * 60,
