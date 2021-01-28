@@ -3,10 +3,6 @@
 
 ## 使用说明
 
-### 安装客户端程序
-```javascript
-npm i -s ssocket-js
-```
 ### [点击安装服务端程序](https://github.com/mytwz/ssocket)
 ```javascript
 npm i -s ssocket
@@ -14,8 +10,40 @@ npm i -s ssocket
 
 ### 建立连接
 
+#### 网页食用方式
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script src="./build/ssocket.min.js"></script>
+<script>
+    window.onload = function(){
+        const client = new Ssocket("ws[wss]://ip[:port]", {
+            /**ping 超时时间单位：毫秒 */
+            ping_timeout: 1000 * 60,
+            /**ping 间隔时间：单位毫秒 */
+            ping_time: 1000 * 1,
+            /**重连次数 */
+            reconnection_count: 60,
+            /**每次重连的间隔：单位毫秒 */
+            reconnection_time: 1000 * 2,
+        })
+    }
+</script>
+</html>
+```
+
+#### Webpack/vue/react 食用方式
 ```javascript
- // <script src="./dist/ssocket.min.js"></script> 浏览器引入方式 
+// npm i -s ssocket-js
+
 const Ssocket = require("ssocket-js").default;
 const client = new Ssocket("ws[wss]://ip[:port]", {
     /**ping 超时时间单位：毫秒 */
