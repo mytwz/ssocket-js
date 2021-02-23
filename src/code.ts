@@ -9,6 +9,32 @@
 import pako from "pako"
 import debug from "./logger";
 
+const UINT32_MAX = 0xFFFFFFFF;
+
+declare global {
+    interface DataView {
+        setUint64(offset: number, value: number): void;
+        getUint64(offset?: number): number;
+    }
+}
+
+DataView.prototype.setUint64 = function(offset: number, value: number){
+    let big = ~~(value / UINT32_MAX);
+    let low = (value % UINT32_MAX) - big;
+    this.setUint32(offset, big);
+    this.setUint32(offset + 4, low);
+}
+
+
+DataView.prototype.getUint64 = function(offset = 0){
+    let buffer = new Uint8Array(this.buffer.slice(offset, offset + 8));
+    let hex = "0x";
+    buffer.forEach(value => {
+        hex += Number(value).toString(16);
+    })
+    return +hex;
+}
+
 const logger = debug("code")
 
 
@@ -172,6 +198,10 @@ class Protos {
                 buffer.setUint32(offset, +value);
                 offset += 4;
                 break;
+            case DataType.uint64:
+                buffer.setUint64(offset, +value);
+                offset += 8;
+                break;
             case DataType.float:
                 buffer.setFloat32(offset, +value);
                 offset += 4;
@@ -258,6 +288,10 @@ class Protos {
             case DataType.uint32:
                 value = buffer.getUint32(offset)
                 offset += 4;
+                break;
+            case DataType.uint64:
+                value = buffer.getUint64(offset)
+                offset += 8;
                 break;
             case DataType.float:
                 value = buffer.getFloat32(offset)
@@ -407,7 +441,7 @@ export function encode(type: PackageType, package_data?: PackageData | Shakehand
     }
     else if(type == PackageType.heartbeat){
     
-        buffer.setFloat64(index, Date.now());           index += 8;
+        buffer.setUint64(index, Date.now());           index += 8;
         
     }
     else if(type == PackageType.shakehands){
@@ -474,7 +508,7 @@ export function decode(_buffer: Uint8Array): Package | ShakehandsPackageData {
             return { type, request_id, path, status, msg, data }
         }
         else if(type == PackageType.heartbeat){
-            let data        = buffer.getFloat64(index);
+            let data        = buffer.getUint64(index);
             return { type, data }
         }
         else if(type == PackageType.shakehands){
