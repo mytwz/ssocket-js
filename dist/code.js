@@ -13,6 +13,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.expandStatusCode = exports.StatusCode = exports.decode = exports.encode = exports.parseResponseJson = exports.parseRequestJson = exports.SocketStatus = exports.PackageType = void 0;
 var pako_1 = __importDefault(require("pako"));
 var logger_1 = __importDefault(require("./logger"));
+var UINT32_MAX = 0xFFFFFFFF;
+DataView.prototype.setUint64 = function (offset, value) {
+    var big = ~~(value / UINT32_MAX);
+    var low = (value % UINT32_MAX) - big;
+    this.setUint32(offset, big);
+    this.setUint32(offset + 4, low);
+};
+DataView.prototype.getUint64 = function (offset) {
+    if (offset === void 0) { offset = 0; }
+    var buffer = new Uint8Array(this.buffer.slice(offset, offset + 8));
+    var hex = "0x";
+    buffer.forEach(function (value) {
+        hex += Number(value).toString(16);
+    });
+    return +hex;
+};
 var logger = logger_1.default("code");
 /**
  * 字符串转 Uint8Array
@@ -158,6 +174,10 @@ var Protos = /** @class */ (function () {
                 buffer.setUint32(offset, +value);
                 offset += 4;
                 break;
+            case DataType.uint64:
+                buffer.setUint64(offset, +value);
+                offset += 8;
+                break;
             case DataType.float:
                 buffer.setFloat32(offset, +value);
                 offset += 4;
@@ -245,6 +265,10 @@ var Protos = /** @class */ (function () {
             case DataType.uint32:
                 value = buffer.getUint32(offset);
                 offset += 4;
+                break;
+            case DataType.uint64:
+                value = buffer.getUint64(offset);
+                offset += 8;
                 break;
             case DataType.float:
                 value = buffer.getFloat32(offset);
@@ -361,7 +385,7 @@ function encode(type, package_data) {
         _data.forEach(function (uint8) { return buffer.setUint8(index++, uint8); });
     }
     else if (type == PackageType.heartbeat) {
-        buffer.setFloat64(index, Date.now());
+        buffer.setUint64(index, Date.now());
         index += 8;
     }
     else if (type == PackageType.shakehands) {
@@ -429,7 +453,7 @@ function decode(_buffer) {
             return { type: type, request_id: request_id, path: path, status: status_1, msg: msg, data: data };
         }
         else if (type == PackageType.heartbeat) {
-            var data = buffer.getFloat64(index);
+            var data = buffer.getUint64(index);
             return { type: type, data: data };
         }
         else if (type == PackageType.shakehands) {

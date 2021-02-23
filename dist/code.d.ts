@@ -1,3 +1,9 @@
+declare global {
+    interface DataView {
+        setUint64(offset: number, value: number): void;
+        getUint64(offset?: number): number;
+    }
+}
 export declare enum PackageType {
     /**握手 */
     shakehands = 0,
