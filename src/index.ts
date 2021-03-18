@@ -2,8 +2,8 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-01-21 11:34:51 +0800
- * @FilePath: \ssocket-js\src\index.ts
+ * @LastEditTime: 2021-03-18 16:37:06 +0800
+ * @FilePath: /ssocket-js/src/index.ts
  */
 
 import CODE, * as Code from "./code"
@@ -60,7 +60,7 @@ function send(id: string, data: Code.PackageData){
 /**
  * 客户端主类
  */
-export default class Ssocket extends Emitter {
+export = class Ssocket extends Emitter {
     /**客户端ID，这个ID与服务端同步 */
     private id: string;
     /**配置 */
@@ -100,7 +100,7 @@ export default class Ssocket extends Emitter {
             if(this.opts.protos.request) Code.parseRequestJson(this.opts.protos.request)
             if(this.opts.protos.response) Code.parseResponseJson(this.opts.protos.response)
         }
-        this.connection();
+        
         logger(this.id + ":constructor", {opts})
     }
     /**

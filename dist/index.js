@@ -3,8 +3,8 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-01-21 11:34:51 +0800
- * @FilePath: \ssocket-js\src\index.ts
+ * @LastEditTime: 2021-03-18 16:37:06 +0800
+ * @FilePath: /ssocket-js/src/index.ts
  */
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -48,7 +48,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var code_1 = __importStar(require("./code")), Code = code_1;
 var emitter_1 = __importDefault(require("./emitter"));
 var logger_1 = __importDefault(require("./logger"));
@@ -79,10 +78,7 @@ function send(id, data) {
     socket.send(Code.encode(Code.PackageType.data, data));
     logger(id + ":send", data);
 }
-/**
- * 客户端主类
- */
-var Ssocket = /** @class */ (function (_super) {
+module.exports = /** @class */ (function (_super) {
     __extends(Ssocket, _super);
     /**
      * 构造一个 Ssocket 连接
@@ -111,7 +107,6 @@ var Ssocket = /** @class */ (function (_super) {
             if (_this.opts.protos.response)
                 Code.parseResponseJson(_this.opts.protos.response);
         }
-        _this.connection();
         logger(_this.id + ":constructor", { opts: opts });
         return _this;
     }
@@ -219,4 +214,3 @@ var Ssocket = /** @class */ (function (_super) {
     };
     return Ssocket;
 }(emitter_1.default));
-exports.default = Ssocket;

@@ -44,7 +44,7 @@ npm i -s ssocket
 ```javascript
 // npm i -s ssocket-js
 
-const Ssocket = require("ssocket-js").default;
+const Ssocket = require("ssocket-js");
 const client = new Ssocket("ws[wss]://ip[:port]", {
     /**ping 超时时间单位：毫秒 */
     ping_timeout: 1000 * 60,
