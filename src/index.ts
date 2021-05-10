@@ -2,7 +2,7 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-05-10 17:35:35 +0800
+ * @LastEditTime: 2021-05-10 18:09:01 +0800
  * @FilePath: /ssocket-js/src/index.ts
  */
 
@@ -65,6 +65,7 @@ export = class Ssocket extends Emitter {
     private id: string;
     /**配置 */
     private opts: Options;
+    private ping_id: NodeJS.Timeout;
     /**ping 定时器ID */
     private ping_timeout_id: NodeJS.Timeout;
     /**重连定时器ID */
@@ -92,8 +93,7 @@ export = class Ssocket extends Emitter {
             reconnection_time: 1000 * 2,
         }, opts);
         this.id = "";
-        this.ping_timeout_id = <NodeJS.Timeout><unknown>0;
-        this.reconnection_id = <NodeJS.Timeout><unknown>0;
+        this.ping_id = this.reconnection_id = this.ping_timeout_id = <NodeJS.Timeout><unknown>0;
         socket = <WebSocket><unknown>null;
         this.reconnection_count = this.opts.reconnection_count;
         if(this.opts.protos){
@@ -121,6 +121,7 @@ export = class Ssocket extends Emitter {
         }
         socket.onclose = ({ code, reason }) => {
             clearTimeout(this.ping_timeout_id);
+            clearTimeout(this.ping_id);
             this.status = Code.SocketStatus.CLOSE;
             socket.onopen = socket.onmessage = socket.onclose = socket.onerror = null;
             socket = <WebSocket><unknown>null;
@@ -155,7 +156,9 @@ export = class Ssocket extends Emitter {
             else if(data.type == Code.PackageType.heartbeat) {
                 this.emit("pong", data.data)
                 clearTimeout(this.ping_timeout_id);
-                setTimeout(() => {
+                clearTimeout(this.ping_id);
+                this.ping_id = setTimeout(() => {
+                    clearTimeout(this.ping_timeout_id);
                     if(this.status != Code.SocketStatus.CONNECTION) return ;
                     socket.send(Code.encode(Code.PackageType.heartbeat))
                     this.ping_timeout_id = setTimeout(_ => socket.close(<number>CODE[4102][0], <string>CODE[4102][1]), this.opts.ping_timeout)
