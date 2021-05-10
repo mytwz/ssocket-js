@@ -2,7 +2,7 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-05-10 15:51:56 +0800
+ * @LastEditTime: 2021-05-10 17:35:35 +0800
  * @FilePath: /ssocket-js/src/index.ts
  */
 
@@ -100,7 +100,7 @@ export = class Ssocket extends Emitter {
             if(this.opts.protos.request) Code.parseRequestJson(this.opts.protos.request)
             if(this.opts.protos.response) Code.parseResponseJson(this.opts.protos.response)
         }
-        
+        this.connection();
         logger(this.id + ":constructor", {opts})
     }
     /**

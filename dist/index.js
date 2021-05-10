@@ -3,7 +3,7 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-05-10 15:51:56 +0800
+ * @LastEditTime: 2021-05-10 17:35:35 +0800
  * @FilePath: /ssocket-js/src/index.ts
  */
 var __extends = (this && this.__extends) || (function () {
@@ -107,6 +107,7 @@ module.exports = /** @class */ (function (_super) {
             if (_this.opts.protos.response)
                 Code.parseResponseJson(_this.opts.protos.response);
         }
+        _this.connection();
         logger(_this.id + ":constructor", { opts: opts });
         return _this;
     }
