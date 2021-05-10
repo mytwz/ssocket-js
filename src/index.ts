@@ -2,7 +2,7 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-03-18 16:37:06 +0800
+ * @LastEditTime: 2021-05-10 15:51:56 +0800
  * @FilePath: /ssocket-js/src/index.ts
  */
 
@@ -156,6 +156,7 @@ export = class Ssocket extends Emitter {
                 this.emit("pong", data.data)
                 clearTimeout(this.ping_timeout_id);
                 setTimeout(() => {
+                    if(this.status != Code.SocketStatus.CONNECTION) return ;
                     socket.send(Code.encode(Code.PackageType.heartbeat))
                     this.ping_timeout_id = setTimeout(_ => socket.close(<number>CODE[4102][0], <string>CODE[4102][1]), this.opts.ping_timeout)
                     this.emit("ping")

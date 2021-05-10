@@ -3,7 +3,7 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 客户端程序
- * @LastEditTime: 2021-03-18 16:37:06 +0800
+ * @LastEditTime: 2021-05-10 15:51:56 +0800
  * @FilePath: /ssocket-js/src/index.ts
  */
 var __extends = (this && this.__extends) || (function () {
@@ -175,6 +175,8 @@ module.exports = /** @class */ (function (_super) {
                 _this.emit("pong", data.data);
                 clearTimeout(_this.ping_timeout_id);
                 setTimeout(function () {
+                    if (_this.status != Code.SocketStatus.CONNECTION)
+                        return;
                     socket.send(Code.encode(Code.PackageType.heartbeat));
                     _this.ping_timeout_id = setTimeout(function (_) { return socket.close(code_1.default[4102][0], code_1.default[4102][1]); }, _this.opts.ping_timeout);
                     _this.emit("ping");
