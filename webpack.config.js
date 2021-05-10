@@ -2,8 +2,8 @@
  * @Author: Summer
  * @LastEditors: Summer
  * @Description: 
- * @LastEditTime: 2021-01-22 09:05:36 +0800
- * @FilePath: \ssocket-js\webpack.config.js
+ * @LastEditTime: 2021-05-10 17:23:28 +0800
+ * @FilePath: /ssocket-js/webpack.config.js
  */
 // 引入包
 const path = require("path")
@@ -30,7 +30,7 @@ module.exports = {
         },
         library: 'Ssocket',
         libraryTarget: 'umd',
-        libraryExport: 'default',
+        // libraryExport: 'default',
         umdNamedDefine: true,
         publicPath: '/',
     },
